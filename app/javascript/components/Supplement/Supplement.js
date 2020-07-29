@@ -1,8 +1,8 @@
 import React, { useState, useEffect, Fragment } from 'react'
-import Axios from 'axios'
+import axios from 'axios'
 import Header from './Header'
 import styled from 'styled-components'
-import  ReviewForm from './ReviewForm'
+import ReviewForm from './ReviewForm'
 
 const Wrapper = styled.div`
   margin: 0 auto;
@@ -21,8 +21,6 @@ const Main = styled.div`
   
 `
 
-
-
 const Supplement = (props) => {
   const [supplement, setSupplement] = useState({})
   const [review, setReview] = useState({})
@@ -32,7 +30,7 @@ const Supplement = (props) => {
     const slug = props.match.params.slug
     const url = `/api/v1/supplements/${slug}`
 
-    Axios.get(url)
+    axios.get(url)
       .then((resp) => {
         setSupplement(resp.data)
         setLoaded(true)
@@ -41,6 +39,26 @@ const Supplement = (props) => {
 
   }, [])
 
+  const handleChange = (e) => {
+    e.preventDefault()
+    setReview({...review, [e.target.name]: e.target.value})
+    console.log(review)
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+
+    const csrfToken = document.querySelector('[name=csrf-token]').content
+    axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken
+    debugger
+    const supplement_id = supplement.data.id 
+    axios.post('/api/v1/reviews', { review, supplement_id })
+      .then(resp => {
+        debugger
+      })
+      .catch(resp => {})
+  }
+
   return (
     <Wrapper>
       {
@@ -48,15 +66,20 @@ const Supplement = (props) => {
         <Fragment>
           <Collumn>
             <Main>
-                <Header
-                  attributes={supplement.data.attributes}
-                  reviews={supplement.included}
-                />
+              <Header
+                attributes={supplement.data.attributes}
+                reviews={supplement.included}
+              />
             </Main>
             <div className="reviews"></div>
           </Collumn>
           <Collumn>
-            <ReviewForm />
+            <ReviewForm
+              handleChange={handleChange}
+              handleSubmit={handleSubmit}
+              attributes={supplement.data.attributes}
+              review={review}
+            />
           </Collumn>
         </Fragment>
       }

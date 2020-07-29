@@ -15,7 +15,7 @@ const Wrapper = styled.div `
     width: 50%;
     border-radius: 100%;
     border: 1px solid rgba(0,0,0,0.1);
-    margin-botom: 10px;
+    margin-botom: 10px;   
   }
   h1 {
     font-size: 30px;
