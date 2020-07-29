@@ -42,21 +42,27 @@ const Supplement = (props) => {
   const handleChange = (e) => {
     e.preventDefault()
     setReview({...review, [e.target.name]: e.target.value})
-    console.log(review)
   }
 
   const handleSubmit = (e) => {
     e.preventDefault()
-
+    debugger
     const csrfToken = document.querySelector('[name=csrf-token]').content
     axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken
-    debugger
     const supplement_id = supplement.data.id 
     axios.post('/api/v1/reviews', { review, supplement_id })
       .then(resp => {
         debugger
+        const included = [...supplement.included, resp.data]
+        setSupplement({...supplement, included})
+        setReview({title: '', description: '', score: 0})
       })
       .catch(resp => {})
+  }
+
+  const setRating = (score, e) => {
+    e.preventDefault()
+    setReview({review, score})
   }
 
   return (
@@ -69,6 +75,7 @@ const Supplement = (props) => {
               <Header
                 attributes={supplement.data.attributes}
                 reviews={supplement.included}
+
               />
             </Main>
             <div className="reviews"></div>
@@ -77,6 +84,8 @@ const Supplement = (props) => {
             <ReviewForm
               handleChange={handleChange}
               handleSubmit={handleSubmit}
+              setRating={setRating}
+
               attributes={supplement.data.attributes}
               review={review}
             />
