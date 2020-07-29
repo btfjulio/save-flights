@@ -7,7 +7,7 @@ import Supplement from '../components/Supplement/Supplement'
 const App = () => (
           <Switch>
             <Route exact path='/'component={Supplements} />
-            <Route exact path='/suppplements/:slug'component={Supplement} />
+            <Route exact path='/supplements/:slug' component={Supplement} />
           </Switch>
         )
 
